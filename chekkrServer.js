@@ -1,4 +1,8 @@
-var http = require("http");
+var http = require("http"),
+    url = require("url"),
+    path = require("path"),
+    fs = require("fs"),
+    port = process.argv[2] || 8888;
 
 var urls_tysonkarl = [
 "http://www.globyl.co",
@@ -14,7 +18,10 @@ var urls_tysonkarl = [
 "http://moringa.treesforlife.org/",
 "http://globyl.blogspot.com/",
 "http://timetrails.blogspot.com/",
-"http://whooshup.blogspot.com/"
+"http://whooshup.blogspot.com/",
+"http://ktys-agilecards.jit.su/agilecards.html",
+"http://ktys-organon.jit.su/",
+"http://timestore.jit.su/"   
 ];
 
 var urls_tysonben = [
@@ -40,35 +47,67 @@ http.createServer(function(req, res){
 
     var urlsReq = req.url.substring(2);
     
-    switch(urlsReq) {
-        case "tysonben": urls = urls_tysonben; break;
-        case "tysonkarl": urls = urls_tysonkarl; break;  
-        default: urls = urls_tysonben;
+    if(urlsReq.indexOf("tyson") >= 0) {
+    
+        switch(urlsReq) {
+            case "tysonben": urls = urls_tysonben; break;
+            case "tysonkarl": urls = urls_tysonkarl; break;  
+            default: urls = urls_tysonben;
+        }
+
+        getResults( function() {
+
+            setTimeout(function(){ 
+
+                //console.log("yo" + JSON.stringify(report_json.report)); 
+                    res.writeHead(200, { 'Content-Type': 'application/json', "Access-Control-Allow-Origin":"*" });
+
+
+                    res.write(JSON.stringify(report_json.report));
+                    res.end();
+
+                    report_json.report = [];
+
+                }, 
+
+                10000);
+
+        }); //getResults
+
+    } else {
+        //return resource
+        var uri = url.parse(req.url).pathname;
+        var filename = path.join(process.cwd(), uri);
+        
+        fs.exists(filename, function(exists) {
+            if(!exists) {
+              res.writeHead(404, {"Content-Type": "text/plain"});
+              res.write("404 Not Found\n");
+              res.end();
+              return;
+            }
+
+            if (fs.statSync(filename).isDirectory()) filename += '/index.html';
+
+
+            fs.readFile(filename, "binary", function(err, file) {
+              if(err) {        
+                res.writeHead(500, {"Content-Type": "text/html"});
+                res.write(err + "\n");
+                res.end();
+                return;
+              }
+
+              res.writeHead(200);
+              res.write(file, "binary");
+              res.end();
+            });
+        });
+        
     }
-    
-	getResults( function() {
+}).listen(port);
 
-		setTimeout(function(){ 
-		
-			//console.log("yo" + JSON.stringify(report_json.report)); 
-				res.writeHead(200, { 'Content-Type': 'application/json', "Access-Control-Allow-Origin":"*" });
-				
-				
-				res.write(JSON.stringify(report_json.report));
-    			res.end();
-				
-				report_json.report = [];
-			
-			}, 
-			
-			10000);
-			
-	}); //getResults
-
-    
-}).listen(8000);
-
-console.log("chekkr Server started");
+console.log("chekkr Server started on port " + port);
 
 
 
