@@ -1,0 +1,26 @@
+body {
+  padding-top: 50px;
+}
+
+.mainBox {
+	margin-top: 45px;
+}
+
+
+.navbar-chekkr {
+background-color: #0F4A6E;
+border-color: #0F4A6E;
+border-bottom: 5px solid #165C87;
+}
+
+.navbar a {
+	color: white;
+}
+
+.urlName {
+	font-size: 1.4em;
+}
+
+.target {
+	font-weight: bold;	
+}
