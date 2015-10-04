@@ -43,15 +43,29 @@
           </button>
           <a class="navbar-brand" href="#">Chekkr</a>
         </div>
-        <div id="navbar" class="collapse navbar-collapse">
+        <div class="navbar-right" id="navbar" class="collapse navbar-collapse">
           <!--<ul class="nav navbar-nav">
             <li class="active"><a href="#">Home</a></li>
             <li><a href="#about">About</a></li>
             <li><a href="#contact">Contact</a></li>
           </ul>-->
+          
+			<div class="dropdown" id="droppy">
+			  <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">
+				Select Account
+				<span class="caret"></span>
+			  </button>
+			  <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
+				<li role="presentation"><a role="menuitem" tabindex="-1" href="#">Karl Tyson</a></li>
+				<li role="presentation"><a role="menuitem" tabindex="-1" href="#">Ben Tyson</a></li>
+				
+			  </ul>
+			</div>
         </div><!--/.nav-collapse -->
       </div>
     </nav>
+      
+
 
     <div class="container">
 
@@ -61,7 +75,7 @@
 				<option value="tysonben" selected="selected">Ben</option>
 				<option value="tysonkarl">Karl</option>
 			</select>
-			<input type='button' id='sendRequest' value='chk'></input>
+			<input type="button" class="btn btn-default" id="sendRequest" value="chk">
 		
     	
     	
@@ -98,8 +112,14 @@ function sendRequest() {
 
 
 	var toSend = $("#selectUser option:selected").val();
-
-	$.ajax({url: "http://localhost:8000", 
+    var hostAddress = "";
+    if(document.URL.indexOf("localhost") >= 0) {
+        hostAddress = "http://localhost:8888";
+    }else {
+        hostAddress = "http://chekkr.nodejitsu.com";
+    }
+    
+	$.ajax({url: hostAddress, 
             data: toSend, 
             trype: "POST",
             success: function(result){
